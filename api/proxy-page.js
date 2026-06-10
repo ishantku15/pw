@@ -1,8 +1,6 @@
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
+export default async function handler(req, res) {
     try {
-        const url = new URL(req.url);
+        const url = new URL(req.url, `https://${req.headers.host}`);
         const targetPath = url.searchParams.get('path') || '';
         url.searchParams.delete('path');
         
@@ -12,7 +10,7 @@ export default async function handler(req) {
         
         const response = await fetch(targetUrl, {
             headers: {
-                'User-Agent': req.headers.get('user-agent') || 'Mozilla/5.0',
+                'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0',
                 'Accept': 'text/html,application/xhtml+xml',
                 'Accept-Language': 'en-US,en;q=0.9',
             }
@@ -31,17 +29,11 @@ export default async function handler(req) {
         // Remove PW/Vedstudy specific titles if needed
         html = html.replace(/<title>(.*?)vedstudy<\/title>/gi, '<title>$1Mod Galaxy</title>');
         
-        return new Response(html, {
-            status: response.status,
-            headers: {
-                'Content-Type': 'text/html',
-                'Cache-Control': 'no-store, max-age=0'
-            }
-        });
+        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Cache-Control', 'no-store, max-age=0');
+        res.status(response.status).send(html);
     } catch (e) {
-        return new Response('Error proxying page: ' + e.message, {
-            status: 500,
-            headers: { 'Content-Type': 'text/plain' }
-        });
+        console.error(e);
+        res.status(500).send('Error proxying page: ' + e.message);
     }
 }

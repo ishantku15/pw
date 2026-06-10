@@ -1,25 +1,17 @@
-export const config = { runtime: 'edge' };
-
-export default async function handler(req) {
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
-    });
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(204).end();
   }
 
-  const { searchParams } = new URL(req.url);
-  const targetUrl = searchParams.get('url');
+  const url = new URL(req.url, `https://${req.headers.host}`);
+  const targetUrl = url.searchParams.get('url');
 
   if (!targetUrl) {
-    return new Response(JSON.stringify({ error: 'Missing url parameter' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return res.status(400).json({ error: 'Missing url parameter' });
   }
 
   const API_TOKEN = 'bb0082e0ede156f2a39bf274f943aa567155b660';
@@ -29,15 +21,8 @@ export default async function handler(req) {
       `https://vplink.in/api?api=${API_TOKEN}&url=${encodeURIComponent(targetUrl)}`
     );
     const data = await vpRes.json();
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return res.status(200).json(data);
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'VPLINK request failed', detail: err.message }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return res.status(502).json({ error: 'VPLINK request failed', detail: err.message });
   }
 }
