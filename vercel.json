@@ -1,18 +1,18 @@
 {
   "rewrites": [
     { "source": "/pw-api/(.*)", "destination": "https://api.penpencil.co/$1" },
-    { "source": "/", "destination": "/home.html" },
-    { "source": "/batches", "destination": "/home.html" },
-    { "source": "/subjects", "destination": "/subjects.html" },
-    { "source": "/content", "destination": "/content.html" },
-    { "source": "/stream", "destination": "/stream.html" },
+    { "source": "/", "destination": "/public/home.html" },
+    { "source": "/batches", "destination": "/public/home.html" },
+    { "source": "/subjects", "destination": "/public/subjects.html" },
+    { "source": "/content", "destination": "/public/content.html" },
+    { "source": "/stream", "destination": "/public/stream.html" },
     { "source": "/schedule-details", "destination": "/api/proxy-page?path=schedule-details" },
     { "source": "/media/(.*)", "destination": "/api/proxy-page?path=media/$1" },
     { "source": "/get-dpp-quiz", "destination": "/api/proxy-page?path=get-dpp-quiz" },
     { "source": "/get-batch-test", "destination": "/api/proxy-page?path=get-batch-test" },
-    { "source": "/get-access", "destination": "/get-access.html" },
-    { "source": "/khazana", "destination": "/khazana.html" },
-    { "source": "/reset-key", "destination": "/get-access.html" }
+    { "source": "/get-access", "destination": "/public/get-access.html" },
+    { "source": "/khazana", "destination": "/public/khazana.html" },
+    { "source": "/reset-key", "destination": "/public/get-access.html" }
   ],
   "headers": [
     {
